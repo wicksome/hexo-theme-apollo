@@ -2,17 +2,24 @@ mixin postInfo(item)
     .post-info
         != full_date(item.date, 'll')
         if item.from && (is_home() || is_post())
-            a.post-from(href=item.from target="_blank" title=item.from) 翻译 · 原文地址
+            a.post-from(href=item.from target="_blank" title=item.from)
 
 mixin postMeta(item)
-    if item.tags
-        i.fa.fa-tag
-        - item.categories.sort('posts').each(function(item) {
-            a.tag(href=config.root + item.path, title= item.name)= item.name + " "
-        - });
-        - item.tags.sort('posts').each(function(item) {
-            a.tag(href=config.root + item.path, title= item.name)= item.name + " "
-        - });
+    .post-info
+        != full_date(item.date, 'll')
+        if item.from && (is_home() || is_post())
+            a.post-from(href=item.from target="_blank" title=item.from)
+        if item.tags
+            ul.tags
+                //- i.fa.fa-tag
+                - item.categories.sort('posts').each(function(item) {
+                    li
+                        a.tag(href=config.root + item.path, title= item.name)= item.name + " "
+                - });
+                - item.tags.sort('posts').each(function(item) {
+                    li
+                        a.tag(href=config.root + item.path, title= item.name)= item.name + " "
+                - });
 
 //- Index Page
 mixin posts()
@@ -23,9 +30,13 @@ mixin posts()
                     h2.post-title
                         a.post-title-link(href= url_for(item.path))
                             != item.title
-                    +postInfo(item)
-                    .post-content
-                        != item.excerpt
+                    +postMeta(item)
+                    if item.layout === 'slide'
+                        include slide
+                        +slideTumb(item)
+                    else
+                        .post-content
+                            != item.excerpt
                     a.read-more(href= url_for(item.path))!= __('more')
         - })
 
@@ -52,7 +63,7 @@ mixin post(item)
         article.post-block
             h1.post-title
                 != item.title
-            +postInfo(item)
+            //- +postInfo(item)
             +postMeta(item)
             .post-content
                 != item.content
